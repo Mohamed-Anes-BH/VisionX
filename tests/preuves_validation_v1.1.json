@@ -1,0 +1,404 @@
+[
+  {
+    "id": "TEST-01",
+    "nom": "Healthcheck standard",
+    "methode": "GET",
+    "chemin": "/health",
+    "headers": null,
+    "corps_envoye": null,
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "uptime_seconds": 0,
+        "agent": "Marketing Automation - VisionX",
+        "version": "1.0.0"
+      },
+      "error": null
+    },
+    "duree_ms": 10.34,
+    "succes": true
+  },
+  {
+    "id": "TEST-02",
+    "nom": "Schéma de configuration JSON",
+    "methode": "GET",
+    "chemin": "/config-schema",
+    "headers": null,
+    "corps_envoye": null,
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "type": "object",
+        "properties": {
+          "seuil_qualification_lead": {
+            "type": "integer",
+            "description": "Score d'intérêt à partir duquel le prospect est automatiquement publié vers l'agent Commercial",
+            "default": 70,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "auto_email_bienvenue": {
+            "type": "boolean",
+            "description": "Déclencher automatiquement un email de bienvenue dès réception d'une commande confirmée",
+            "default": true
+          },
+          "auto_email_relance": {
+            "type": "boolean",
+            "description": "Déclencher une campagne de relance en cas de commande annulée",
+            "default": true
+          }
+        }
+      },
+      "error": null
+    },
+    "duree_ms": 2.24,
+    "succes": true
+  },
+  {
+    "id": "TEST-03",
+    "nom": "Activation Tenant légitime",
+    "methode": "POST",
+    "chemin": "/tenant/activate",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01",
+      "Authorization": "Bearer secret-token-xyz"
+    },
+    "corps_envoye": {
+      "config": {
+        "seuil_qualification_lead": 75,
+        "auto_email_bienvenue": true
+      }
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "activated": true,
+        "tenant_id": "ENT-ESTIN-01"
+      },
+      "error": null
+    },
+    "duree_ms": 2.42,
+    "succes": true
+  },
+  {
+    "id": "TEST-04",
+    "nom": "Statut d'un Tenant actif",
+    "methode": "GET",
+    "chemin": "/tenant/ENT-ESTIN-01/status",
+    "headers": null,
+    "corps_envoye": null,
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "state": "running",
+        "prospects_count": 0,
+        "commandes_recues_count": 0,
+        "campagnes_count": 0
+      },
+      "error": null
+    },
+    "duree_ms": 1.88,
+    "succes": true
+  },
+  {
+    "id": "TEST-05",
+    "nom": "Activation refusée sans X-Tenant-Id",
+    "methode": "POST",
+    "chemin": "/tenant/activate",
+    "headers": null,
+    "corps_envoye": {
+      "config": {}
+    },
+    "code_obtenu": 400,
+    "code_attendu": 400,
+    "reponse": {
+      "detail": "En-tête X-Tenant-Id manquant"
+    },
+    "duree_ms": 1.75,
+    "succes": true
+  },
+  {
+    "id": "TEST-06",
+    "nom": "Statut refusé pour Tenant inexistant",
+    "methode": "GET",
+    "chemin": "/tenant/TENANT-INCONNU/status",
+    "headers": null,
+    "corps_envoye": null,
+    "code_obtenu": 404,
+    "code_attendu": 404,
+    "reponse": {
+      "detail": "Tenant 'TENANT-INCONNU' non activé sur cet agent"
+    },
+    "duree_ms": 1.7,
+    "succes": true
+  },
+  {
+    "id": "TEST-07",
+    "nom": "Consommation refusée sans X-Tenant-Id",
+    "methode": "POST",
+    "chemin": "/exchange/notify",
+    "headers": null,
+    "corps_envoye": {
+      "object_type": "commande"
+    },
+    "code_obtenu": 400,
+    "code_attendu": 400,
+    "reponse": {
+      "detail": "X-Tenant-Id manquant"
+    },
+    "duree_ms": 3.07,
+    "succes": true
+  },
+  {
+    "id": "TEST-08",
+    "nom": "Consommation refusée pour Tenant non activé",
+    "methode": "POST",
+    "chemin": "/exchange/notify",
+    "headers": {
+      "X-Tenant-Id": "ENT-FANTOME"
+    },
+    "corps_envoye": {
+      "object_type": "commande"
+    },
+    "code_obtenu": 404,
+    "code_attendu": 404,
+    "reponse": {
+      "detail": "Tenant inconnu ou inactif"
+    },
+    "duree_ms": 1.28,
+    "succes": true
+  },
+  {
+    "id": "TEST-09",
+    "nom": "Réception et traitement Commande Confirmée",
+    "methode": "POST",
+    "chemin": "/exchange/notify",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": {
+      "object_type": "commande",
+      "external_id": "CMD-2027-8888",
+      "version": 1,
+      "payload": {
+        "numero_commande": "CMD-2027-8888",
+        "date_commande": "2027-01-15T12:00:00Z",
+        "client": {
+          "nom": "Entreprise Alpha",
+          "email": "alpha@pro.dz"
+        },
+        "lignes": [
+          {
+            "sku": "SKU-PROD-01",
+            "quantite": 3,
+            "prix_unitaire_ht": 150.0
+          }
+        ],
+        "montant_total_ht": 450.0,
+        "statut": "confirmee"
+      }
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "processed": true,
+        "commande_id": "CMD-2027-8888",
+        "actions": [
+          "Email de bienvenue et remerciement envoyé à alpha@pro.dz pour la commande CMD-2027-8888 (450.0€)"
+        ]
+      },
+      "error": null
+    },
+    "duree_ms": 1.26,
+    "succes": true
+  },
+  {
+    "id": "TEST-10",
+    "nom": "Réception et relance Commande Annulée",
+    "methode": "POST",
+    "chemin": "/exchange/notify",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": {
+      "object_type": "commande",
+      "external_id": "CMD-2027-8889",
+      "version": 1,
+      "payload": {
+        "numero_commande": "CMD-2027-8889",
+        "date_commande": "2027-01-15T13:00:00Z",
+        "client": {
+          "nom": "Entreprise Beta",
+          "email": "beta@pro.dz"
+        },
+        "lignes": [
+          {
+            "sku": "SKU-PROD-02",
+            "quantite": 1,
+            "prix_unitaire_ht": 80.0
+          }
+        ],
+        "montant_total_ht": 80.0,
+        "statut": "annulee"
+      }
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "processed": true,
+        "commande_id": "CMD-2027-8889",
+        "actions": [
+          "Email de relance / enquête d'abandon envoyé à beta@pro.dz"
+        ]
+      },
+      "error": null
+    },
+    "duree_ms": 1.24,
+    "succes": true
+  },
+  {
+    "id": "TEST-11",
+    "nom": "Ignorer silencieusement un objet non consommé",
+    "methode": "POST",
+    "chemin": "/exchange/notify",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": {
+      "object_type": "capteur_iot",
+      "external_id": "IOT-99",
+      "payload": {}
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "processed": false,
+        "reason": "unhandled_object_type"
+      },
+      "error": null
+    },
+    "duree_ms": 1.19,
+    "succes": true
+  },
+  {
+    "id": "TEST-12",
+    "nom": "Création Prospect qualifié (score >= seuil)",
+    "methode": "POST",
+    "chemin": "/marketing/prospects",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": {
+      "id_prospect": "PROS-2027-0901",
+      "nom": "Amina Saidi",
+      "email": "amina.s@entreprise.dz",
+      "score_interet": 85,
+      "statut": "nouveau"
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "prospect": {
+          "id_prospect": "PROS-2027-0901",
+          "nom": "Amina Saidi",
+          "email": "amina.s@entreprise.dz",
+          "score_interet": 85,
+          "statut": "qualifie"
+        },
+        "qualifie": true,
+        "publie_au_noyau": false
+      },
+      "error": null
+    },
+    "duree_ms": 29.68,
+    "succes": true
+  },
+  {
+    "id": "TEST-13",
+    "nom": "Création Prospect non qualifié (score < seuil)",
+    "methode": "POST",
+    "chemin": "/marketing/prospects",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": {
+      "id_prospect": "PROS-2027-0902",
+      "nom": "Yacine Mansouri",
+      "email": "yacine@entreprise.dz",
+      "score_interet": 40,
+      "statut": "nouveau"
+    },
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "prospect": {
+          "id_prospect": "PROS-2027-0902",
+          "nom": "Yacine Mansouri",
+          "email": "yacine@entreprise.dz",
+          "score_interet": 40,
+          "statut": "nouveau"
+        },
+        "qualifie": false,
+        "publie_au_noyau": false
+      },
+      "error": null
+    },
+    "duree_ms": 1.44,
+    "succes": true
+  },
+  {
+    "id": "TEST-14",
+    "nom": "Désactivation et Purge des données",
+    "methode": "POST",
+    "chemin": "/tenant/deactivate",
+    "headers": {
+      "X-Tenant-Id": "ENT-ESTIN-01"
+    },
+    "corps_envoye": null,
+    "code_obtenu": 200,
+    "code_attendu": 200,
+    "reponse": {
+      "status": "ok",
+      "data": {
+        "deactivated": true,
+        "data_purged": true
+      },
+      "error": null
+    },
+    "duree_ms": 1.87,
+    "succes": true
+  },
+  {
+    "id": "TEST-15",
+    "nom": "Vérification post-purge (accès impossible)",
+    "methode": "GET",
+    "chemin": "/tenant/ENT-ESTIN-01/status",
+    "headers": null,
+    "corps_envoye": null,
+    "code_obtenu": 404,
+    "code_attendu": 404,
+    "reponse": {
+      "detail": "Tenant 'ENT-ESTIN-01' non activé sur cet agent"
+    },
+    "duree_ms": 1.4,
+    "succes": true
+  }
+]

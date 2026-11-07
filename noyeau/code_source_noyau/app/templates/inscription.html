@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block titre %}Inscription{% endblock %}
+{% block contenu %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-3">Inscrire votre entreprise</h2>
+
+        {% if erreur %}
+        <div class="alert alert-danger">{{ erreur }}</div>
+        {% endif %}
+
+        <form method="post" action="/inscription">
+            <div class="mb-3">
+                <label class="form-label">Nom de l'entreprise</label>
+                <input type="text" class="form-control" name="company_name" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Secteur d'activite</label>
+                    <input type="text" class="form-control" name="sector" placeholder="ex: commerce, industrie...">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Taille du parc informatique</label>
+                    <select class="form-select" name="park_size">
+                        <option value="petit">Petit</option>
+                        <option value="moyen" selected>Moyen</option>
+                        <option value="grand">Grand</option>
+                    </select>
+                </div>
+            </div>
+            <hr>
+            <p class="text-muted">Compte administrateur de l'entreprise</p>
+            <div class="mb-3">
+                <label class="form-label">Nom complet</label>
+                <input type="text" class="form-control" name="admin_full_name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="admin_email" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" name="admin_password" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary">Creer mon compte</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

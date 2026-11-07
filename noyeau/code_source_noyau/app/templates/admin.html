@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block titre %}Administration{% endblock %}
+{% block contenu %}
+
+<h2 class="mb-4">Administration de la plateforme</h2>
+
+<h4>Agents</h4>
+<p class="text-muted">
+    Cycle de vie d'un agent : brouillon &rarr; soumis &rarr; certifie &rarr; publie.
+    Un agent soumis par une equipe doit etre verifie conforme au contrat d'integration
+    avant d'etre certifie, puis publie pour apparaitre dans le catalogue.
+</p>
+<table class="table table-sm align-middle">
+    <thead>
+        <tr>
+            <th>Nom</th><th>Filiere</th><th>Equipe</th><th>Statut</th><th>URL</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agent in agents %}
+        <tr>
+            <td>{{ agent.name }} <span class="text-muted small">v{{ agent.version }}</span></td>
+            <td>{{ agent.filiere.value.replace('_', ' ') }}</td>
+            <td>{{ agent.team_name or "—" }}</td>
+            <td>
+                {% if agent.status.value == "published" %}
+                    <span class="badge bg-success">Publie</span>
+                {% elif agent.status.value == "certified" %}
+                    <span class="badge bg-info text-dark">Certifie</span>
+                {% elif agent.status.value == "in_review" %}
+                    <span class="badge bg-warning text-dark">Soumis</span>
+                {% elif agent.status.value == "suspended" %}
+                    <span class="badge bg-danger">Suspendu</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ agent.status.value }}</span>
+                {% endif %}
+            </td>
+            <td><code class="small">{{ agent.base_url }}</code></td>
+            <td>
+                {% if agent.status.value == "in_review" %}
+                <form method="post" action="/admin/agents/{{ agent.id }}/certifier" class="d-inline">
+                    <button class="btn btn-sm btn-outline-primary">Certifier</button>
+                </form>
+                {% elif agent.status.value == "certified" %}
+                <form method="post" action="/admin/agents/{{ agent.id }}/publier" class="d-inline">
+                    <button class="btn btn-sm btn-primary">Publier</button>
+                </form>
+                {% endif %}
+                {% if agent.status.value in ("certified", "published") %}
+                <form method="post" action="/admin/agents/{{ agent.id }}/suspendre" class="d-inline">
+                    <button class="btn btn-sm btn-outline-danger">Suspendre</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-muted">Aucun agent soumis pour le moment.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="mt-5">Entreprises inscrites</h4>
+<table class="table table-sm">
+    <thead><tr><th>Nom</th><th>Secteur</th><th>Parc</th><th>Statut</th><th>Actions</th></tr></thead>
+    <tbody>
+        {% for c in companies %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.sector or "—" }}</td>
+            <td>{{ c.park_size or "—" }}</td>
+            <td>
+                {% if c.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-secondary">Suspendue</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if c.is_active %}
+                <form method="post" action="/admin/companies/{{ c.id }}/suspendre">
+                    <button class="btn btn-sm btn-outline-danger">Suspendre</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-muted">Aucune entreprise inscrite pour le moment.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="mt-5">Derniers evenements (toutes entreprises confondues)</h4>
+<table class="table table-sm">
+    <thead><tr><th>Date</th><th>Agent</th><th>Severite</th><th>Type</th></tr></thead>
+    <tbody>
+        {% for e in evenements %}
+        <tr>
+            <td>{{ e.received_at.strftime("%d/%m/%Y %H:%M") }}</td>
+            <td>{{ e.agent_id }}</td>
+            <td>{{ e.severity }}</td>
+            <td>{{ e.event_type }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-muted">Aucun evenement recu pour le moment.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

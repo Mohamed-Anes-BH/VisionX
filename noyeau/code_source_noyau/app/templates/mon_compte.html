@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block titre %}Mon compte{% endblock %}
+{% block contenu %}
+
+<h2 class="mb-3">{{ user.company.name }}</h2>
+
+<h4 class="mt-4">Agents souscrits</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Agent</th>
+            <th>Statut</th>
+            <th>Cle API du tenant (remise a l'agent)</th>
+            <th>Souscrit le</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in subscriptions %}
+        <tr>
+            <td>{{ s.agent.name }}</td>
+            <td>
+                {% if s.status.value == "active" %}
+                    <span class="badge bg-success">Actif</span>
+                {% elif s.status.value == "suspended" %}
+                    <span class="badge bg-warning text-dark">Suspendu</span>
+                {% elif s.status.value == "cancelled" %}
+                    <span class="badge bg-secondary">Annule</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ s.status.value }}</span>
+                {% endif %}
+            </td>
+            <td><span class="cle-api">{{ s.tenant_api_key }}</span></td>
+            <td>{{ s.created_at.strftime("%d/%m/%Y") }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-muted">Aucun agent souscrit pour le moment.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="/catalogue" class="btn btn-outline-primary btn-sm">Voir le catalogue</a>
+
+<h4 class="mt-5">Derniers evenements recus</h4>
+<table class="table table-sm">
+    <thead>
+        <tr><th>Date</th><th>Severite</th><th>Type</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+        {% for e in evenements %}
+        <tr>
+            <td>{{ e.received_at.strftime("%d/%m/%Y %H:%M") }}</td>
+            <td>{{ e.severity }}</td>
+            <td>{{ e.event_type }}</td>
+            <td><code class="small">{{ e.payload }}</code></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-muted">Aucun evenement recu pour le moment.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

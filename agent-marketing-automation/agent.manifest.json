@@ -1,0 +1,34 @@
+{
+  "slug": "agent-marketing-automation-visionx",
+  "name": "Marketing Automation - VisionX",
+  "version": "1.0.0",
+  "description": "Agent d'automatisation marketing metier : scoring de leads, publication de prospects vers les commerciaux, et declenchement de campagnes cibles apres commandes.",
+  "filiere": "automatisation_metier",
+  "category": "marketing_automation",
+  "developer": {
+    "name": "Bouharizi Mohamed Anes & Equipe VisionX",
+    "email": "anes.bouharizi@estin.dz"
+  },
+  "team_name": "VisionX",
+  "pricing_model": "flat_monthly",
+  "price": 0,
+  "resource_requirements": {
+    "cpu": "0.5",
+    "memory_mb": 256
+  },
+  "endpoints": {
+    "base_url": "http://localhost:9000",
+    "health": "/health",
+    "activate": "/tenant/activate",
+    "deactivate": "/tenant/deactivate",
+    "status": "/tenant/{tenant_id}/status",
+    "config_schema": "/config-schema",
+    "exchange_notify": "/exchange/notify"
+  },
+  "produces": [
+    "prospect"
+  ],
+  "consumes": [
+    "commande"
+  ]
+}

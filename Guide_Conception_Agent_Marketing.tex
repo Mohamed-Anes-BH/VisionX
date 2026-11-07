@@ -1,0 +1,475 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage[margin=1.8cm,top=2.1cm,bottom=2.1cm]{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{eurosym}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Palette de couleurs professionnelle
+\definecolor{primary}{RGB}{20, 65, 105}       % Bleu marine
+\definecolor{secondary}{RGB}{35, 100, 140}    % Bleu acier
+\definecolor{accent}{RGB}{215, 110, 10}       % Ambre marketing
+\definecolor{darkgray}{RGB}{40, 50, 65}
+\definecolor{lightgray}{RGB}{246, 248, 251}
+\definecolor{bordergray}{RGB}{220, 226, 235}
+\definecolor{success}{RGB}{20, 95, 50}
+\definecolor{successbg}{RGB}{240, 253, 244}
+\definecolor{warningbg}{RGB}{254, 243, 199}
+\definecolor{warningframe}{RGB}{180, 83, 9}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=secondary,
+    citecolor=accent,
+    pdftitle={Guide de Conception - Agent Metier Marketing SMA},
+    pdfauthor={Antigravity}
+}
+
+% En-tête et pied de page
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\rhead{\textcolor{darkgray}{\footnotesize \textbf{Guide SMA} -- Agent Métier Marketing}}
+\lhead{\textcolor{darkgray}{\footnotesize Ingénierie des Systèmes Multi-Agents}}
+\rfoot{\textcolor{darkgray}{\footnotesize Page \thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Espacement titres
+\titlespacing*{\section}{0pt}{1.1ex plus 0.3ex minus 0.2ex}{0.5ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{0.8ex plus 0.2ex minus 0.2ex}{0.4ex plus 0.2ex}
+\titlespacing*{\subsubsection}{0pt}{0.6ex plus 0.2ex minus 0.2ex}{0.3ex plus 0.2ex}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{primary}}{\thesection.}{0.7em}{}[\titlerule]
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{secondary}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalfont\small\bfseries\color{darkgray}}{\thesubsubsection}{0.4em}{}
+
+% Boîtes d'alerte et concepts
+\newtcolorbox{conceptbox}[1]{
+  colback=lightgray,
+  colframe=primary,
+  fonttitle=\bfseries\small\color{white},
+  title={#1},
+  arc=2mm,
+  boxrule=0.8pt,
+  left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+\newtcolorbox{alertbox}[1]{
+  colback=successbg,
+  colframe=success,
+  fonttitle=\bfseries\small\color{white},
+  title={#1},
+  arc=2mm,
+  boxrule=0.8pt,
+  left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+\newtcolorbox{warningbox}[1]{
+  colback=warningbg,
+  colframe=warningframe,
+  fonttitle=\bfseries\small\color{white},
+  title={#1},
+  arc=2mm,
+  boxrule=0.8pt,
+  left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+\newtcolorbox{marketingbox}[1]{
+  colback=orange!5!white,
+  colframe=accent,
+  fonttitle=\bfseries\small\color{white},
+  title={#1},
+  arc=2mm,
+  boxrule=0.8pt,
+  left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+% Configuration Listings (Code)
+\lstset{
+  backgroundcolor=\color{lightgray},
+  basicstyle=\ttfamily\scriptsize\color{darkgray},
+  keywordstyle=\bfseries\color{primary},
+  commentstyle=\itshape\color{gray},
+  stringstyle=\color{accent},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{bordergray},
+  tabsize=2,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=6pt,
+  aboveskip=4pt,
+  belowskip=4pt
+}
+
+\begin{document}
+
+% ==================== PAGE 1 ====================
+\begin{center}
+    {\LARGE \textbf{\color{primary}Guide de Conception d'un Agent Métier Marketing}}\\[0.15cm]
+    {\large \textbf{\color{secondary}Fondements SMA, Négociation FIPA-ACL \& Intégration au Noyau Central}}\\[0.25cm]
+    \rule{0.85\textwidth}{0.8pt}\\[0.15cm]
+    {\footnotesize \textbf{Document de Cadrage Méthodologique et Technique pour l'Équipe Projet} | Semestre Académique}
+\end{center}
+\vspace{-0.25cm}
+
+\begin{conceptbox}{Objectif Global du Projet}
+Votre équipe a pour mission de développer un \textbf{Agent Logiciel de Marketing}. Dans la simulation, votre agent est responsable de valoriser, promouvoir et échanger des \textbf{produits finis} avec les agents conçus par les autres équipes (acheteurs, usines de fabrication ou distributeurs).
+
+Pour orchestrer ce marché, votre enseignant fournit un \textbf{Noyau central} (middleware / bus d'échange). Ce document synthétise tout ce que vous devez impérativement maîtriser pour débuter sereinement : concepts fondamentaux, fonctionnement du noyau, stratégie marketing, code d'intégration et pièges à éviter.
+\end{conceptbox}
+
+\section{Comprendre les Agents et les Systèmes Multi-Agents (SMA)}
+
+\subsection{Qu'est-ce qu'un Agent logiciel ?}
+Contrairement à un script classique ou à une API passive qui ne s'exécute que lorsqu'on l'appelle explicitement, un \textbf{Agent Intelligent} est une entité logicielle autonome située dans un environnement dynamique, dotée de buts propres et capable d'agir de son propre chef.
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{p{3cm} X X}
+\toprule
+\textbf{Critère} & \textbf{Programme Classique / Script} & \textbf{Agent Intelligent (SMA)} \\
+\midrule
+\textbf{Contrôle} & Passif : exécute l'ordre reçu sans délibérer. & Autonome : décide \textit{si} et \textit{comment} il répond. \\
+\textbf{Déclenchement} & Appel de méthode synchrone externe. & Boucle autonome perpétuelle d'écoute et d'initiative. \\
+\textbf{Environnement} & Entrées prévisibles et contrôlées. & Marché ouvert, concurrentiel et incertain. \\
+\textbf{Comportement} & Déterministe (\textit{Entrée} $\rightarrow$ \textit{Sortie}). & Stratégique (\textit{Perception} $\rightarrow$ \textit{Délibération} $\rightarrow$ \textit{Action}). \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Les 4 Piliers d'un Agent (Modèle de Wooldridge \& Jennings)}
+\begin{itemize}[leftmargin=*, itemsep=1.5pt]
+    \item \textbf{Autonomie :} L'agent contrôle son état interne, ses fonds et ses choix sans dépendre d'un humain.
+    \item \textbf{Réactivité :} L'agent perçoit son environnement (offres reçues, alertes de marché) et réagit à temps.
+    \item \textbf{Proactivité :} L'agent ne subit pas ; il prend l'initiative de démarcher des clients et de diffuser des offres.
+    \item \textbf{Sociabilité :} L'agent communique et négocie via un protocole formel et structuré (actes de parole).
+\end{itemize}
+
+\subsection{La Boucle Fondamentale : Perception \texorpdfstring{$\rightarrow$}{->} Délibération \texorpdfstring{$\rightarrow$}{->} Action}
+Le cœur d'exécution de l'agent tourne en continu selon trois étapes fondamentales :
+
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={draw=primary, fill=lightgray, rounded corners=1.5mm, font=\bfseries\footnotesize, align=center, inner sep=4pt, minimum height=0.85cm},
+    arrow/.style={->, >=Stealth, thick, color=secondary}
+]
+    \node[box, fill=primary!15] (percept) at (0, 0) {1. PERCEPTION\\ \scriptsize Réception message / Marché};
+    \node[box, fill=accent!20] (delib) at (5.2, 0) {2. DÉLIBÉRATION\\ \scriptsize Stratégie Marketing / Prix};
+    \node[box, fill=success!20] (action) at (10.4, 0) {3. ACTION\\ \scriptsize Envoi PROPOSE, ACCEPT, CFP};
+    \node[box, fill=darkgray!15, minimum width=11.6cm] (env) at (5.2, -1.35) {ENVIRONNEMENT : Noyau du Professeur + Marché des Autres Équipes};
+
+    \draw[arrow] (env.north -| percept.south) -- (percept.south) node[midway, left, font=\scriptsize] {Événements};
+    \draw[arrow] (percept.east) -- (delib.west);
+    \draw[arrow] (delib.east) -- (action.west);
+    \draw[arrow] (action.south) -- (env.north -| action.south) node[midway, right, font=\scriptsize] {Messages / Réponses};
+\end{tikzpicture}
+\end{center}
+
+\subsection{Le Modèle BDI (Beliefs, Desires, Intentions)}
+Pour structurer la mémoire et le raisonnement de l'agent, le modèle d'architecture de référence est le modèle \textbf{BDI} :
+\begin{itemize}[leftmargin=*, itemsep=1.5pt]
+    \item \textbf{Beliefs (Croyances / Connaissances) :} Ce que l'agent a en mémoire à l'instant $t$ (stock disponible, trésorerie, historique des prix des concurrents, réputation des partenaires).
+    \item \textbf{Desires (Désirs / Buts) :} Les finalités économiques (ex: écouler le stock au cours de la simulation en maximisant la marge nette).
+    \item \textbf{Intentions (Plans engagés) :} L'action précise en cours d'exécution (ex: négocier une concession de 5\% sur le lot \#4).
+\end{itemize}
+
+% ==================== PAGE 2 ====================
+\section{Le Rôle du Noyau (« Kernel ») fourni par le Professeur}
+
+Le noyau fourni par votre enseignant ne concourt pas comme une équipe ; c'est \textbf{l'infrastructure d'arbitrage et de transport (Middleware)} du Système Multi-Agents.
+
+\subsection{Les 4 Fonctions Primordiales du Noyau}
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+    \item \textbf{Annuaire et Découverte (Directory Facilitator / Pages Jaunes) :} Registre officiel des agents connectés. Votre agent interroge l'annuaire pour découvrir qui vend et qui achète.
+    \item \textbf{Bus de Messagerie et Routage :} Chaque agent se connecte \textbf{uniquement au noyau}. Le noyau achemine les messages de façon centralisée et sécurisée.
+    \item \textbf{Arbitrage et Validation des Transactions (Registre Officiel) :} Si un contrat de vente est signé, le noyau valide que le vendeur possède les produits et que l'acheteur a les crédits nécessaires.
+    \item \textbf{Gestion du Temps (Clock / Rounds) :} La simulation progresse par tours synchronisés (\textit{rounds} discrets cadencés) ou en flux continu asynchrone.
+\end{enumerate}
+
+\subsection{Le Protocole de Dialogue : Standard FIPA-ACL}
+Les échanges respectent la grammaire standard FIPA-ACL (\textit{Agent Communication Language}), formulée en \textbf{JSON} :
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{p{3.8cm} p{4.2cm} X}
+\toprule
+\textbf{Performative (Acte)} & \textbf{Intention du Message} & \textbf{Exemple d'Usage Marketing} \\
+\midrule
+\texttt{CFP} (\textit{Call For Proposal}) & Appel d'offres / Sollicitation & « Avis au marché : qui souhaite acquérir 20 unités de Produit-A ? » \\
+\texttt{PROPOSE} & Soumission d'une offre chiffrée & « Je propose 20 unités au tarif unitaire de 45\,\euro. » \\
+\texttt{ACCEPT\_PROPOSAL} & Accord et conclusion du contrat & « Offre validée, nous confirmons la transaction. » \\
+\texttt{REJECT\_PROPOSAL} & Déclin de la proposition & « Prix inacceptable, proposition déclinée. » \\
+\texttt{INFORM} & Transmission d'informations & « Notification : mise à jour de notre catalogue commercial. » \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Protocole Type de Négociation : Contract Net Protocol (CNP)}
+Voici le schéma de négociation bilatérale le plus fréquent lors de la vente de produits finis :
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.8cm, auto,
+    actor/.style={draw=primary, fill=primary!10, rounded corners=1.5mm, font=\bfseries\footnotesize, minimum width=2.6cm, minimum height=0.65cm},
+    msg/.style={->, >=Stealth, thick, font=\scriptsize}
+]
+    \node[actor] (mkt) at (0, 0) {Votre Agent (Marketing)};
+    \node[actor] (noyau) at (5.2, 0) {Noyau (Middleware)};
+    \node[actor] (client) at (10.4, 0) {Agent Client (Autre Équipe)};
+
+    \draw[dashed, gray] (mkt) -- (0, -3.1);
+    \draw[dashed, gray] (noyau) -- (5.2, -3.1);
+    \draw[dashed, gray] (client) -- (10.4, -3.1);
+
+    \draw[msg, color=primary] (0, -0.6) -- (5.2, -0.6) node[midway, above] {1. \texttt{CFP} (Diffusion du lot)};
+    \draw[msg, color=primary] (5.2, -0.8) -- (10.4, -0.8) node[midway, above] {Transmission};
+
+    \draw[msg, color=accent] (10.4, -1.3) -- (5.2, -1.3) node[midway, above] {2. \texttt{PROPOSE} (Offre d'achat: 38\,\euro)};
+    \draw[msg, color=accent] (5.2, -1.5) -- (0, -1.5) node[midway, above] {Transmission};
+
+    \draw[msg, color=success] (0, -2.0) -- (5.2, -2.0) node[midway, above] {3. \texttt{ACCEPT} ou contre-offre \texttt{PROPOSE}};
+    \draw[msg, color=success] (5.2, -2.2) -- (10.4, -2.2) node[midway, above] {Transmission};
+
+    \draw[msg, color=secondary] (5.2, -2.8) -- (0, -2.8) node[midway, above] {4. \texttt{INFORM} (Confirmation transaction par le Noyau)};
+\end{tikzpicture}
+\end{center}
+
+\begin{conceptbox}{Format Concret d'une Trame JSON FIPA-ACL}
+Tout message transitant par le noyau possède une structure standardisée :
+\begin{lstlisting}[language=Python]
+{
+  "sender": "Equipe_Marketing_3",
+  "receiver": "Equipe_Acheteur_7",
+  "conversation_id": "conv_lot_942",
+  "performative": "PROPOSE",
+  "content": {"product": "Module_Camera_HD", "quantity": 10, "unit_price": 42.50}
+}
+\end{lstlisting}
+\end{conceptbox}
+
+% ==================== PAGE 3 ====================
+\section{L'Agent Métier Marketing : Stratégies et Algorithmes Décisionnels}
+
+\subsection{Missions Spécifiques de l'Agent Marketing}
+Dans la simulation, votre agent incarne la \textbf{direction commerciale} de votre équipe :
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+    \item \textbf{Positionnement Produit :} Calculer la valeur marchande des produits finis selon leurs caractéristiques.
+    \item \textbf{Pricing Dynamique :} Ajuster les prix selon le coût de revient, la demande globale et l'échéance du temps.
+    \item \textbf{Tactique de Concession :} Savoir accorder des rabais calculés pour conclure sans brader la rentabilité.
+    \item \textbf{Veille Concurrentielle :} Consigner l'historique des transactions pour adapter ses marges aux autres équipes.
+\end{itemize}
+
+\subsection{Modèle Mathématique de Tarification Dynamique Temporelle}
+Soit $C$ le coût unitaire de fabrication, $P_{\max}$ le prix d'ouverture désiré, et $P_{\min}$ le prix plancher en dessous duquel l'équipe vend à perte ($P_{\min} > C$). Au tour ou temps $t \in [0, T]$, le prix cible $P(t)$ est calculé par :
+\begin{equation}
+P(t) = P_{\min} + (P_{\max} - P_{\min}) \cdot \left(1 - \frac{t}{T}\right)^{\beta}
+\end{equation}
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+    \item \textbf{$\beta > 1$ (Stratégie Concessionnaire) :} Baisse rapide des prix dès le début pour liquider les stocks.
+    \item \textbf{$\beta = 1$ (Stratégie Linéaire) :} Concession régulière et constante au fil des tours.
+    \item \textbf{$0 < \beta < 1$ (Stratégie Tenace / Écrémage) :} Maintien de prix élevés le plus longtemps possible.
+\end{itemize}
+
+\subsection{Matrice Décisionnelle Face à une Offre Reçue}
+Quand un agent client vous soumet une offre de prix $P_{\text{offre}}$, la délibération applique cette règle formelle :
+\begin{equation}
+\text{Décision}(P_{\text{offre}}) = 
+\begin{cases} 
+\texttt{ACCEPT\_PROPOSAL} & \text{si } P_{\text{offre}} \ge P(t) \\
+\texttt{PROPOSE}\left( \frac{P(t) + P_{\text{offre}}}{2} \right) & \text{si } P_{\min} \le P_{\text{offre}} < P(t) \quad \text{(Contre-offre de compromis)} \\
+\texttt{REJECT\_PROPOSAL} & \text{si } P_{\text{offre}} < P_{\min}
+\end{cases}
+\end{equation}
+
+\section{Architecture Logicielle \& Guide d'Intégration au Noyau}
+
+\subsection{Architecture Modulaire en 4 Couches}
+Pour rester sereins et agiles face aux évolutions du code du professeur, découpez votre agent en 4 couches hermétiques :
+
+\begin{center}
+\begin{tikzpicture}[
+    layer/.style={draw=primary, fill=lightgray, rounded corners=1.5mm, text width=12.5cm, font=\scriptsize, minimum height=0.68cm, align=left, inner sep=4pt},
+    arrow/.style={<->, >=Stealth, thick, color=accent}
+]
+    \node[layer, fill=accent!15] (l4) at (0, 2.4) {\textbf{Couche 4 : Stratégie Métier Marketing} (Pricing dynamique, matrice de décision, concession)};
+    \node[layer, fill=secondary!15] (l3) at (0, 1.6) {\textbf{Couche 3 : État \& Mémoire (Beliefs)} (Portefeuille, stock de produits finis, réputation)};
+    \node[layer, fill=primary!15] (l2) at (0, 0.8) {\textbf{Couche 2 : Protocole FIPA-ACL} (Désérialisation JSON $\leftrightarrow$ Objets métiers)};
+    \node[layer, fill=darkgray!15] (l1) at (0, 0.0) {\textbf{Couche 1 : Connecteur Réseau} (Client WebSockets, Socket TCP ou API HTTP vers le Noyau)};
+
+    \draw[arrow] (l1.north) -- (l2.south);
+    \draw[arrow] (l2.north) -- (l3.south);
+    \draw[arrow] (l3.north) -- (l4.south);
+\end{tikzpicture}
+\end{center}
+
+\subsection{Checklist Technique : Les questions à poser impérativement au professeur}
+\begin{alertbox}{Checklist d'Intégration Réseau}
+\begin{itemize}[leftmargin=*, itemsep=1.5pt]
+    \item[\textbf{[ ]}] \textbf{Moyen de transport :} WebSockets, Sockets TCP brutes, API REST HTTP, bus MQTT ou wrapper Python fourni ?
+    \item[\textbf{[ ]}] \textbf{Schéma des données :} Clés JSON exactes (\texttt{"performative"}, \texttt{"sender"}, \texttt{"receiver"}, \texttt{"content"}) ?
+    \item[\textbf{[ ]}] \textbf{Handshake :} Quel message exact envoyer pour s'enregistrer auprès de l'annuaire au lancement ?
+    \item[\textbf{[ ]}] \textbf{Cadencement temporel :} Simulation par tours (\textit{rounds}) discrets ou temps réel asynchrone ?
+    \item[\textbf{[ ]}] \textbf{Structure d'un produit :} Quels attributs définissent un produit final (ID, qualité, coût unitaire) ?
+\end{itemize}
+\end{alertbox}
+
+% ==================== PAGE 4 ====================
+\section{Implémentation de Référence (Template Python Modulaire)}
+
+Ce squelette Python complet illustre la séparation absolue entre la logique de décision marketing et la tuyauterie réseau :
+
+\begin{lstlisting}[language=Python]
+import json
+
+class MarketingStrategy:
+    """Couche 4 (Metier) : Pricing dynamique et tactique de negociation."""
+    def __init__(self, cost_price, min_margin=1.15, max_margin=1.70):
+        self.cost = cost_price
+        self.p_min = cost_price * min_margin      # Prix plancher absolu (rentabilite)
+        self.p_max = cost_price * max_margin      # Prix d'ouverture ideal (forte marge)
+
+    def compute_target_price(self, progress_ratio, beta=1.5):
+        """Concession temporelle selon l'avancement du round (0.0 a 1.0)."""
+        return self.p_min + (self.p_max - self.p_min) * ((1.0 - progress_ratio) ** beta)
+
+    def evaluate_offer(self, offered_price, progress_ratio):
+        target = self.compute_target_price(progress_ratio)
+        if offered_price >= target:
+            return "ACCEPT_PROPOSAL", offered_price
+        elif offered_price >= self.p_min:
+            counter_offer = round((target + offered_price) / 2.0, 2)
+            return "PROPOSE", counter_offer
+        return "REJECT_PROPOSAL", None
+
+class MarketingAgent:
+    """Couches 2 & 3 : Gestion de l'etat interne et reaction aux messages."""
+    def __init__(self, agent_id, team_id, connector):
+        self.agent_id = agent_id
+        self.team_id = team_id
+        self.connector = connector
+        self.strategy = MarketingStrategy(cost_price=50.0)
+        self.inventory = {}
+        self.negotiation_history = []
+
+    def register_to_kernel(self):
+        """Enregistrement officiel aupres du noyau."""
+        payload = {"performative": "REGISTER", "sender": self.agent_id, "team": self.team_id}
+        self.connector.send(json.dumps(payload))
+
+    def on_message_received(self, raw_json):
+        """Boucle fondamentale : Perception -> Deliberation -> Action"""
+        msg = json.loads(raw_json)
+        performative = msg.get("performative")
+        sender = msg.get("sender")
+        content = msg.get("content", {})
+
+        if performative == "CFP":
+            # Reponse proactive a un appel d'offres entrant
+            opening_price = self.strategy.p_max
+            reply = {
+                "sender": self.agent_id,
+                "receiver": sender,
+                "performative": "PROPOSE",
+                "content": {"product_id": content.get("product_id"), "price": opening_price}
+            }
+            self.connector.send(json.dumps(reply))
+
+        elif performative == "PROPOSE":
+            # Evaluation d'une proposition de prix recue
+            decision, price = self.strategy.evaluate_offer(content.get("price", 0), progress_ratio=0.5)
+            reply = {
+                "sender": self.agent_id,
+                "receiver": sender,
+                "performative": decision,
+                "content": {"price": price} if price else {}
+            }
+            self.connector.send(json.dumps(reply))
+
+        elif performative == "INFORM":
+            # Confirmation d'une transaction executee par le noyau
+            print(f"[{self.agent_id}] Transaction confirmee par le noyau : {content}")
+\end{lstlisting}
+
+\begin{conceptbox}{Comment Exécuter ce Code dès Aujourd'hui ?}
+Vous n'avez pas besoin d'attendre le serveur du professeur pour tester ! Il suffit d'écrire une fausse classe \texttt{connector} avec une méthode \texttt{send(msg)} qui affiche le message à l'écran, et d'appeler manuellement \texttt{on\_message\_received(json\_test)}.
+\end{conceptbox}
+
+% ==================== PAGE 5 ====================
+\section{Feuille de Route pour l'Équipe Projet}
+
+Pour avancer méthodiquement sans vous bloquer mutuellement, appliquez ce découpage en 4 phases :
+
+\begin{enumerate}[leftmargin=*, itemsep=2.5pt]
+    \item \textbf{Sprint 1 : L'Agent Squelette (Dummy Agent)}
+    \begin{itemize}[itemsep=1pt]
+        \item Mettre en place le dépôt Git et l'architecture en 4 couches.
+        \item Écrire le connecteur réseau minimal : connexion au noyau, envoi du message \texttt{REGISTER}, et confirmation des messages reçus (« ping/pong »).
+    \end{itemize}
+
+    \item \textbf{Sprint 2 : Le Simulateur Factice (« Mock Agent » local)}
+    \begin{itemize}[itemsep=1pt]
+        \item Coder un petit script Python simulant un agent client acheteur sur votre machine locale.
+        \item \textbf{Avantage clé :} Permet à l'équipe de coder et tester la négociation sans attendre la disponibilité du noyau du professeur !
+    \end{itemize}
+
+    \item \textbf{Sprint 3 : Implémentation du Cœur Marketing}
+    \begin{itemize}[itemsep=1pt]
+        \item Développer la fonction de prix dynamique et la gestion des concessions.
+        \item Mémoriser l'historique des prix des autres équipes pour optimiser les marges.
+    \end{itemize}
+
+    \item \textbf{Sprint 4 : Intégration Inter-Équipes \& Résilience}
+    \begin{itemize}[itemsep=1pt]
+        \item Déploiement grandeur nature avec les autres équipes sur le réseau universitaire.
+        \item Gestion robuste des anomalies (timeouts, messages mal formés, déconnexions).
+    \end{itemize}
+\end{enumerate}
+
+\begin{marketingbox}{Conseil Pratique : Répartition des Rôles au sein de l'Équipe}
+\begin{itemize}[leftmargin=*, itemsep=1.5pt]
+    \item \textbf{Étudiant 1 (Lead Réseau \& Noyau) :} Connecteur (Sockets/WebSockets), sérialisation JSON, boucle d'écoute.
+    \item \textbf{Étudiant 2 (Lead Métier Marketing) :} Algorithmes de pricing, matrice de décision, stratégies de concession.
+    \item \textbf{Étudiant 3 (Lead QA / Simulation) :} Script de simulation factice (Mock), tests unitaires, validation des échanges.
+\end{itemize}
+\end{marketingbox}
+
+\section{Les 5 Pièges Fréquents en Projet SMA \& Leurs Solutions}
+
+\begin{warningbox}{Attention aux Erreurs Classiques d'Étudiants}
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+    \item \textbf{Le Blocage Synchrone (Deadlock) :} Ne faites jamais un \texttt{socket.recv()} sans timeout au milieu de votre logique métier. Si un agent adverse plante, votre agent sera gelé. \textit{Solution : Utilisez des écoutes asynchrones ou des threads séparés.}
+    \item \textbf{La Boucle Infinie de Négociation (Ping-Pong) :} Deux agents qui se renvoient sans cesse des contre-offres sans progresser font planter la simulation. \textit{Solution : Ajoutez un compteur d'échanges (ex: max 3 tours de négociation par transaction).}
+    \item \textbf{La Vente à Perte par Concession Excessive :} Si vous concédez trop vite sous la panique du temps, vous vendrez en dessous de votre coût de revient $C$. \textit{Solution : Imposez une barrière matérielle inviolable dans le code : \texttt{assert price >= p\_min}.}
+    \item \textbf{Le Double Engagement de Stock :} Proposer le même lot de produits à deux acheteurs simultanés conduit à un échec d'arbitrage. \textit{Solution : Réservez temporairement le stock lors de l'émission d'une proposition (\texttt{reserved\_stock}).}
+    \item \textbf{Attendre le Noyau du Professeur :} L'erreur la plus coûteuse est de rester passif. \textit{Solution : Développez immédiatement votre stratégie marketing en local avec des tests unitaires.}
+\end{enumerate}
+\end{warningbox}
+
+\end{document}

@@ -1,0 +1,30 @@
+{
+  "slug": "agent-exemple",
+  "name": "Agent exemple",
+  "version": "1.0.0",
+  "description": "Gabarit de reference, a utiliser comme point de depart pour developper votre propre agent.",
+  "filiere": "iot",
+  "category": "demonstration",
+  "developer": {
+    "name": "A completer",
+    "email": "a-completer@etu.ecole.fr"
+  },
+  "team_name": "A completer",
+  "pricing_model": "flat_monthly",
+  "price": 0,
+  "resource_requirements": {
+    "cpu": "0.5",
+    "memory_mb": 256
+  },
+  "endpoints": {
+    "base_url": "http://localhost:9000",
+    "health": "/health",
+    "activate": "/tenant/activate",
+    "deactivate": "/tenant/deactivate",
+    "status": "/tenant/{tenant_id}/status",
+    "config_schema": "/config-schema",
+    "exchange_notify": "/exchange/notify"
+  },
+  "produces": [],
+  "consumes": []
+}

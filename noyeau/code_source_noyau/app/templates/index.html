@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titre %}Accueil{% endblock %}
+{% block contenu %}
+
+<div class="p-5 mb-4 bg-light rounded-3">
+    <h1>Plateforme d'agents pour PME</h1>
+    <p class="lead">
+        Un catalogue d'agents logiciels, developpes par les equipes du mini-projet,
+        couvrant trois filieres : cybersecurite, automatisation metier, et IoT.
+    </p>
+    {% if not user %}
+    <a class="btn btn-primary btn-lg me-2" href="/inscription">Inscrire mon entreprise</a>
+    <a class="btn btn-outline-secondary btn-lg" href="/connexion">Deja inscrit ? Se connecter</a>
+    {% else %}
+    <a class="btn btn-primary btn-lg" href="/catalogue">Voir le catalogue</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h5>Filiere Cybersecurite</h5>
+        <p>Scan de vulnerabilites, detection d'intrusion, audit de configuration, sensibilisation des equipes.</p>
+    </div>
+    <div class="col-md-4">
+        <h5>Filiere Automatisation metier</h5>
+        <p>Commercial, marketing, stock, logistique, facturation : des agents qui collaborent entre eux via un bus d'echange commun.</p>
+    </div>
+    <div class="col-md-4">
+        <h5>Filiere IoT</h5>
+        <p>Surveillance de capteurs, gestion energetique, maintenance predictive, stock connecte.</p>
+    </div>
+</div>
+
+{% endblock %}

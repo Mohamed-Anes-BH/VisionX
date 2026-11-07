@@ -1,0 +1,18 @@
+/* Quelques ajustements au-dessus de Bootstrap, volontairement minimaux. */
+
+.badge-filiere-cybersecurite { background-color: #7a1f1f; }
+.badge-filiere-automatisation_metier { background-color: #1f5c3f; }
+.badge-filiere-iot { background-color: #1f4e7a; }
+
+.carte-agent {
+    height: 100%;
+}
+
+.cle-api {
+    font-family: monospace;
+    font-size: 0.85rem;
+    background-color: #f1f1f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    word-break: break-all;
+}

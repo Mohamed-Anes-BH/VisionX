@@ -1,0 +1,163 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage[margin=1.85cm,top=2.2cm,bottom=2.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{eurosym}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\definecolor{primary}{RGB}{20, 65, 105}       % Bleu marine académique
+\definecolor{secondary}{RGB}{35, 100, 140}    % Bleu acier
+\definecolor{accent}{RGB}{215, 110, 10}       % Ambre marketing
+\definecolor{darkgray}{RGB}{40, 50, 65}
+\definecolor{lightgray}{RGB}{246, 248, 251}
+\definecolor{bordergray}{RGB}{220, 226, 235}
+\definecolor{success}{RGB}{20, 95, 50}
+\definecolor{successbg}{RGB}{240, 253, 244}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=secondary,
+    citecolor=accent,
+    pdftitle={VisionX - Tache 1 : Analyse des Exigences et Conception d'Architecture},
+    pdfauthor={VisionX - ESTIN}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\rhead{\textcolor{darkgray}{\footnotesize \textbf{VisionX} -- Tâche 1 : Analyse \& Architecture}}
+\lhead{\textcolor{darkgray}{\footnotesize Conduite de Projet -- 2ème CS ESTIN}}
+\rfoot{\textcolor{darkgray}{\footnotesize Page \thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titlespacing*{\section}{0pt}{1.1ex plus 0.3ex minus 0.2ex}{0.5ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{0.8ex plus 0.2ex minus 0.2ex}{0.4ex plus 0.2ex}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{primary}}{\thesection.}{0.7em}{}[\titlerule]
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{secondary}}{\thesubsection}{0.5em}{}
+
+\newtcolorbox{infobox}[1]{
+  colback=lightgray, colframe=primary, fonttitle=\bfseries\small\color{white},
+  title={#1}, arc=2mm, boxrule=0.8pt, left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+\newtcolorbox{successbox}[1]{
+  colback=successbg, colframe=success, fonttitle=\bfseries\small\color{white},
+  title={#1}, arc=2mm, boxrule=0.8pt, left=3mm, right=3mm, top=2mm, bottom=2mm,
+  before skip=5pt, after skip=5pt
+}
+
+\lstset{
+  backgroundcolor=\color{lightgray},
+  basicstyle=\ttfamily\scriptsize\color{darkgray},
+  keywordstyle=\bfseries\color{primary},
+  stringstyle=\color{accent},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{bordergray},
+  tabsize=2,
+  showstringspaces=false
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{\color{primary}Équipe VisionX — Mini-Projet Conduite de Projet}}\\[0.15cm]
+    {\large \textbf{\color{secondary}Tâche 1 : Analyse des Exigences \& Conception de l'Architecture Technique}}\\[0.2cm]
+    \rule{0.85\textwidth}{0.8pt}\\[0.15cm]
+    {\footnotesize \textbf{Agent Métier Marketing Automation | Intégration au Noyau Commun | ESTIN 2ème CS}}
+\end{center}
+\vspace{-0.2cm}
+
+\begin{infobox}{Fiche Signalétique du Projet}
+\textbf{Équipe :} VisionX (Chef d'équipe : Bouharizi Mohamed Anes | Membres : Sebti Iyed, Zouane Akram, Fellah Baha, Bertil Anis, Bahi Adem)\\
+\textbf{Filière :} Automatisation Métier (Section 2.2) | \textbf{Agent :} Marketing Automation\\
+\textbf{Flux d'échange :} Produit l'objet métier \texttt{prospect} $\longrightarrow$ Consomme l'objet métier \texttt{commande}\\
+\textbf{Livrable immédiat produit :} Livrable L1 officiel (\texttt{METIER\_DO\_AgentMarketing.docx})
+\end{infobox}
+
+\section{Validation et Analyse des Contrats Officiels de l'Enseignant}
+L'analyse des trois documents contractuels fournis par l'enseignant valide formellement les règles suivantes :
+
+\subsection{1. Contrat d'Intégration (AGENT\_INTEGRATION\_CONTRACT.docx v1.0)}
+\begin{itemize}[leftmargin=*, itemsep=1.5pt]
+    \item \textbf{Indépendance :} L'agent est un service autonome exposé via HTTP et packagé sous Docker. Aucun appel direct entre agents n'est autorisé.
+    \item \textbf{Isolation Multi-Tenant :} Chaque requête transmise par le noyau fournit l'en-tête \texttt{X-Tenant-Id} et le jeton \texttt{Authorization: Bearer <tenant\_api\_key>}.
+    \item \textbf{Enveloppe Standard Strictement Obligatoire :} Tout endpoint doit renvoyer \texttt{\{"status": "ok"|"error", "data": \{...\}|null, "error": "msg"|null\}}.
+    \item \textbf{Les 5 Endpoints Obligatoires :} \texttt{GET /health}, \texttt{POST /tenant/activate}, \texttt{POST /tenant/deactivate}, \texttt{GET /tenant/\{tenant\_id\}/status}, \texttt{GET /config-schema}.
+    \item \textbf{Endpoint de Consommation du Bus :} \texttt{POST /exchange/notify} (obligatoire car notre agent consomme des commandes).
+\end{itemize}
+
+\subsection{2. Registre des Objets Partagés (INTER\_AGENT\_DATA\_CONTRACT.docx)}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{p{2.5cm} p{2cm} p{4cm} X}
+\toprule
+\textbf{Objet Métier} & \textbf{Sens} & \textbf{Schéma Normalisé} & \textbf{Rôle dans VisionX} \\
+\midrule
+\texttt{prospect} & \textbf{PRODUIT} & \texttt{id\_prospect, nom, email, score\_interet, statut} & Généré lors des campagnes ou formulaires. Si \texttt{score\_interet} $\ge$ seuil, publié vers le noyau via \texttt{POST /exchange/agent/prospect}. \\
+\midrule
+\texttt{commande} & \textbf{CONSOMMÉ} & \texttt{numero\_commande, date\_commande, client, lignes, montant\_total\_ht, statut} & Reçu via \texttt{POST /exchange/notify}. Si \texttt{statut=="confirmee"}, déclenche l'onboarding et passe le prospect à client. Si \texttt{"annulee"}, déclenche une relance. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Architecture Globale et Flux de Communication}
+
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={draw=primary, fill=lightgray, rounded corners=1.5mm, font=\bfseries\footnotesize, align=center, inner sep=4pt, minimum height=0.8cm},
+    arrow/.style={->, >=Stealth, thick, color=secondary}
+]
+    \node[box, fill=primary!20, minimum width=3.8cm] (mkt) at (0, 0) {Agent Marketing\\(VisionX - Port 9000)};
+    \node[box, fill=accent!25, minimum width=3.8cm] (noyau) at (6.5, 0) {Noyau Plateforme\\(Bus \& Arbitre - Port 8000)};
+    \node[box, fill=success!20, minimum width=3.8cm] (com) at (13, 0) {Agent Commercial\\(Autre Équipe)};
+
+    \draw[arrow, color=accent] (mkt.north) to[bend left=25] node[midway, above, font=\scriptsize] {1. POST /exchange/agent/prospect} (noyau.north);
+    \draw[arrow, color=accent] (noyau.north) to[bend left=25] node[midway, above, font=\scriptsize] {2. POST /exchange/notify (prospect)} (com.north);
+
+    \draw[arrow, color=primary] (com.south) to[bend left=25] node[midway, below, font=\scriptsize] {3. POST /exchange/agent/commande} (noyau.south);
+    \draw[arrow, color=primary] (noyau.south) to[bend left=25] node[midway, below, font=\scriptsize] {4. POST /exchange/notify (commande)} (mkt.south);
+\end{tikzpicture}
+\end{center}
+
+\section{Modèle de Données Interne \& Isolation Multi-Tenant}
+L'agent VisionX implémente les entités suivantes, strictement cloisonnées par \texttt{tenant\_id} :
+\begin{enumerate}[leftmargin=*, itemsep=1.5pt]
+    \item \textbf{TenantConfig :} \texttt{tenant\_id}, \texttt{tenant\_api\_key}, \texttt{seuil\_qualification\_lead} (défaut : 70), \texttt{auto\_email\_bienvenue} (bool), \texttt{date\_activation}.
+    \item \textbf{Prospect :} \texttt{id\_prospect}, \texttt{tenant\_id}, \texttt{nom}, \texttt{email}, \texttt{score\_interet}, \texttt{statut} (nouveau, qualifié, converti).
+    \item \textbf{CommandeConsommee :} \texttt{numero\_commande}, \texttt{tenant\_id}, \texttt{client\_email}, \texttt{montant\_total\_ht}, \texttt{statut}, \texttt{date\_reception}.
+    \item \textbf{CampagneExecution :} \texttt{id\_execution}, \texttt{tenant\_id}, \texttt{type\_campagne} (onboarding, relance, lead\_nurturing), \texttt{destinataire}, \texttt{timestamp}.
+\end{enumerate}
+
+\begin{successbox}{Validation de la Tâche 1 \& État des Livrables}
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+    \item \textbf{Contrats analysés et intégrés :} 100\% conformes aux spécifications de l'enseignant.
+    \item \textbf{Code source Starter-Kit :} Disponible et testé dans \texttt{/agent-marketing-automation/} avec tests unitaires validés (100\% de réussite).
+    \item \textbf{Livrable Officiel L1 :} Rédigé et généré au format Word sous \texttt{METIER\_DO\_AgentMarketing.docx} prêt à être déposé avant l'échéance T2.
+\end{itemize}
+\end{successbox}
+
+\end{document}
+
